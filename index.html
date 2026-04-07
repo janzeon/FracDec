@@ -7,9 +7,99 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    /* ── Colour tokens ── */
+    :root {
+      --bg:            #f0f2f5;
+      --card-bg:       #fff;
+      --card-shadow:   rgba(0,0,0,0.10);
+      --h1:            #888;
+      --inp-border:    #d4d8df;
+      --inp-color:     #1a1a2e;
+      --inp-bg:        #fafbfc;
+      --inp-focus-bg:  #fff;
+      --kbd-bg:        #eef0f4;
+      --kbd-hover:     #e2e5ec;
+      --btn-bg:        #f7f8fa;
+      --btn-border:    #d4d8df;
+      --btn-color:     #333;
+      --btn-hover-bg:  #eef0f4;
+      --btn-hover-brd: #bcc1ca;
+      --btn-active-bg: #e2e5ec;
+      --muted:         #aaa;
+      --prec-color:    #555;
+      --accent:        #4a7cf7;
+      --result-bg:     #f7f8fa;
+      --result-border: #e4e7ed;
+      --frac-color:    #1a1a2e;
+      --dec-color:     #888;
+      --mm-color:      #2e7d32;
+      --divider:       #e4e7ed;
+      --track-bg:      #e4e7ed;
+      --ep-bg:         #d4d8df;
+      --ep-brd:        #fff;
+      --dot-bg:        #1a1a2e;
+      --dot-brd:       #fff;
+      --dist-color:    #bbb;
+      --store-color:   #555;
+      --hist-h:        #aaa;
+      --hist-empty:    #ccc;
+      --item-bg:       #fff;
+      --item-shadow:   rgba(0,0,0,0.07);
+      --field-bg:      #fafbfc;
+      --field-color:   #1a1a2e;
+      --notes-color:   #555;
+      --mini-frac:     #1a1a2e;
+      --pdot-bg:       #d4d8df;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:            #0f1117;
+        --card-bg:       #1c1e26;
+        --card-shadow:   rgba(0,0,0,0.40);
+        --h1:            #555;
+        --inp-border:    #3a3e4a;
+        --inp-color:     #e8eaf0;
+        --inp-bg:        #14161e;
+        --inp-focus-bg:  #1a1c25;
+        --kbd-bg:        #2a2d38;
+        --kbd-hover:     #32363f;
+        --btn-bg:        #22252f;
+        --btn-border:    #3a3e4a;
+        --btn-color:     #c8cad4;
+        --btn-hover-bg:  #2a2d38;
+        --btn-hover-brd: #4a4e5a;
+        --btn-active-bg: #32363f;
+        --muted:         #555;
+        --prec-color:    #888;
+        --result-bg:     #14161e;
+        --result-border: #2a2d38;
+        --frac-color:    #e8eaf0;
+        --dec-color:     #666;
+        --mm-color:      #4caf50;
+        --divider:       #2a2d38;
+        --track-bg:      #2a2d38;
+        --ep-bg:         #3a3e4a;
+        --ep-brd:        #1c1e26;
+        --dot-bg:        #e8eaf0;
+        --dot-brd:       #1c1e26;
+        --dist-color:    #555;
+        --store-color:   #888;
+        --hist-h:        #555;
+        --hist-empty:    #444;
+        --item-bg:       #1c1e26;
+        --item-shadow:   rgba(0,0,0,0.25);
+        --field-bg:      #14161e;
+        --field-color:   #e8eaf0;
+        --notes-color:   #888;
+        --mini-frac:     #e8eaf0;
+        --pdot-bg:       #3a3e4a;
+      }
+    }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #f0f2f5;
+      background: var(--bg);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -19,9 +109,9 @@
     }
 
     .card {
-      background: #fff;
+      background: var(--card-bg);
       border-radius: 14px;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+      box-shadow: 0 4px 24px var(--card-shadow);
       padding: 2rem 2rem 1.75rem;
       width: 100%;
       max-width: 440px;
@@ -32,33 +122,30 @@
       font-weight: 700;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: #888;
+      color: var(--h1);
       margin-bottom: 1.25rem;
       text-align: center;
     }
 
     /* Input */
-    .input-wrap {
-      position: relative;
-    }
+    .input-wrap { position: relative; }
 
     #formula {
       width: 100%;
       font-family: "Menlo", "Consolas", "Courier New", monospace;
       font-size: 1.1rem;
       padding: 0.65rem 3.2rem 0.65rem 0.85rem;
-      border: 2px solid #d4d8df;
+      border: 2px solid var(--inp-border);
       border-radius: 8px;
       outline: none;
-      color: #1a1a2e;
-      background: #fafbfc;
-      transition: border-color 0.15s;
+      color: var(--inp-color);
+      background: var(--inp-bg);
+      transition: border-color 0.15s, background 0.15s;
       text-align: center;
     }
-
     #formula:focus {
-      border-color: #4a7cf7;
-      background: #fff;
+      border-color: var(--accent);
+      background: var(--inp-focus-bg);
     }
 
     #kbd-toggle {
@@ -67,16 +154,16 @@
       top: 50%; transform: translateY(-50%);
       font-size: 0.68rem;
       font-weight: 700;
-      color: #888;
-      background: #eef0f4;
-      border: 1px solid #d4d8df;
+      color: var(--h1);
+      background: var(--kbd-bg);
+      border: 1px solid var(--inp-border);
       border-radius: 10px;
       padding: 0.15rem 0.45rem;
       cursor: pointer;
       user-select: none;
       line-height: 1.4;
     }
-    #kbd-toggle:hover { background: #e2e5ec; }
+    #kbd-toggle:hover { background: var(--kbd-hover); }
 
     /* Operator buttons */
     .ops {
@@ -91,10 +178,10 @@
       font-weight: 600;
       flex: 1;
       height: 2.4rem;
-      border: 1.5px solid #d4d8df;
+      border: 1.5px solid var(--btn-border);
       border-radius: 7px;
-      background: #f7f8fa;
-      color: #333;
+      background: var(--btn-bg);
+      color: var(--btn-color);
       cursor: pointer;
       transition: background 0.1s, border-color 0.1s;
       display: flex;
@@ -102,28 +189,27 @@
       justify-content: center;
       user-select: none;
     }
-
-    .op-btn:hover { background: #eef0f4; border-color: #bcc1ca; }
-    .op-btn:active { background: #e2e5ec; }
+    .op-btn:hover  { background: var(--btn-hover-bg); border-color: var(--btn-hover-brd); }
+    .op-btn:active { background: var(--btn-active-bg); }
 
     .space-btn {
-      display: none; /* hidden on desktop */
+      display: none;
       width: 100%;
       margin-top: 0.4rem;
       flex: none;
       font-size: 0.82rem;
       letter-spacing: 0.08em;
     }
-
     @media (hover: none) and (pointer: coarse) {
       .space-btn { display: flex; }
     }
+
     .section-label {
       font-size: 0.75rem;
       font-weight: 600;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: #aaa;
+      color: var(--muted);
       margin-top: 1.5rem;
       margin-bottom: 0.5rem;
       text-align: center;
@@ -140,29 +226,27 @@
       font-weight: 600;
       flex: 1;
       padding: 0.3rem 0;
-      border: 1.5px solid #d4d8df;
+      border: 1.5px solid var(--btn-border);
       border-radius: 20px;
-      background: #f7f8fa;
-      color: #555;
+      background: var(--btn-bg);
+      color: var(--prec-color);
       cursor: pointer;
       transition: all 0.12s;
       user-select: none;
       text-align: center;
     }
-
-    .prec-btn:hover { background: #eef0f4; border-color: #bcc1ca; }
-
+    .prec-btn:hover { background: var(--btn-hover-bg); border-color: var(--btn-hover-brd); }
     .prec-btn.active {
-      background: #4a7cf7;
-      border-color: #4a7cf7;
+      background: var(--accent);
+      border-color: var(--accent);
       color: #fff;
     }
 
     /* Result */
     .result-box {
       margin-top: 1.5rem;
-      background: #f7f8fa;
-      border: 1.5px solid #e4e7ed;
+      background: var(--result-bg);
+      border: 1.5px solid var(--result-border);
       border-radius: 10px;
       padding: 1.1rem 1.25rem 1rem;
       min-height: 5.5rem;
@@ -175,50 +259,112 @@
     #result-frac {
       font-size: 2.5rem;
       font-weight: 700;
-      color: #1a1a2e;
+      color: var(--frac-color);
       line-height: 1.1;
       word-break: break-all;
       text-align: center;
       width: 100%;
     }
-
-    #result-frac.error {
-      font-size: 1.2rem;
-      color: #c0392b;
-    }
+    #result-frac.error { font-size: 1.2rem; color: #e74c3c; }
 
     #result-dec {
       font-size: 0.9rem;
-      color: #888;
-      margin-top: 0.35rem;
+      color: var(--dec-color);
       font-family: "Menlo", "Consolas", "Courier New", monospace;
-      text-align: center;
+    }
+
+    #result-dec-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      margin-top: 0.35rem;
       width: 100%;
+      flex-wrap: wrap;
+    }
+
+    #result-mm {
+      font-size: 0.85rem;
+      color: var(--mm-color);
+      font-family: "Menlo", "Consolas", "Courier New", monospace;
+      font-weight: 600;
     }
 
     .snap-visual {
       width: 100%;
       margin-top: 1rem;
       padding-top: 0.75rem;
-      border-top: 1px solid #e4e7ed;
+      border-top: 1px solid var(--divider);
     }
+
+    /* Two-page cross-fade carousel */
+    .snap-carousel-wrap { display: grid; }
+    .snap-page {
+      grid-column: 1; grid-row: 1;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.22s ease;
+    }
+    .snap-page.active { opacity: 1; pointer-events: auto; }
+
+    /* MM tick ruler */
+    .snap-mm-ticks-row {
+      position: relative;
+      height: 26px;
+      margin: 3px 8px 0;
+    }
+    .snap-mm-tick {
+      position: absolute;
+      width: 1.5px;
+      background: #4caf50;
+      top: 0;
+      transform: translateX(-50%);
+      border-radius: 0 0 1px 1px;
+    }
+    .snap-mm-tick.major { height: 10px; }
+    .snap-mm-tick.minor { height: 6px; }
+    .snap-mm-tick-label {
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.5rem;
+      color: #4caf50;
+      white-space: nowrap;
+      font-family: "Menlo", "Consolas", monospace;
+      line-height: 1;
+    }
+
+    /* Page indicator dots */
+    .snap-pdots {
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+      margin-top: 0.5rem;
+    }
+    .snap-pdot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--pdot-bg);
+      transition: background 0.2s;
+      cursor: pointer;
+    }
+    .snap-pdot.active { background: var(--accent); }
 
     .snap-labels {
       display: flex;
       justify-content: space-between;
       font-size: 0.78rem;
       font-weight: 600;
-      color: #aaa;
+      color: var(--muted);
       margin-bottom: 0.35rem;
       font-family: "Menlo", "Consolas", monospace;
     }
-
-    .snap-label.selected { color: #4a7cf7; }
+    .snap-label.selected { color: var(--accent); }
 
     .snap-track {
       position: relative;
       height: 6px;
-      background: #e4e7ed;
+      background: var(--track-bg);
       border-radius: 3px;
       margin: 0 8px;
     }
@@ -227,14 +373,14 @@
       position: absolute;
       width: 12px; height: 12px;
       border-radius: 50%;
-      background: #d4d8df;
-      border: 2px solid #fff;
+      background: var(--ep-bg);
+      border: 2px solid var(--ep-brd);
       top: 50%; transform: translate(-50%, -50%);
     }
     .snap-endpoint:first-child { left: 0%; }
     .snap-endpoint:nth-child(2) { left: 100%; }
     .snap-endpoint.selected {
-      background: #4a7cf7;
+      background: var(--accent);
       box-shadow: 0 0 0 3px rgba(74,124,247,0.2);
     }
 
@@ -242,8 +388,8 @@
       position: absolute;
       width: 10px; height: 10px;
       border-radius: 50%;
-      background: #1a1a2e;
-      border: 2px solid #fff;
+      background: var(--dot-bg);
+      border: 2px solid var(--dot-brd);
       top: 50%; transform: translate(-50%, -50%);
       transition: left 0.12s ease;
       box-shadow: 0 1px 4px rgba(0,0,0,0.18);
@@ -253,11 +399,11 @@
       display: flex;
       justify-content: space-between;
       font-size: 0.72rem;
-      color: #bbb;
+      color: var(--dist-color);
       margin-top: 0.3rem;
       font-family: "Menlo", "Consolas", monospace;
     }
-    .snap-dist.selected { color: #4a7cf7; font-weight: 600; }
+    .snap-dist.selected { color: var(--accent); font-weight: 600; }
 
     /* Store button */
     .store-btn {
@@ -265,19 +411,19 @@
       width: 100%;
       margin-top: 0.85rem;
       padding: 0.55rem;
-      background: #f7f8fa;
-      border: 1.5px solid #d4d8df;
+      background: var(--btn-bg);
+      border: 1.5px solid var(--btn-border);
       border-radius: 8px;
       font-size: 0.82rem;
       font-weight: 600;
-      color: #555;
+      color: var(--store-color);
       cursor: pointer;
       transition: all 0.12s;
       letter-spacing: 0.06em;
       text-transform: uppercase;
     }
-    .store-btn:hover { background: #eef0f4; border-color: #bcc1ca; }
-    .store-btn:active { background: #e2e5ec; }
+    .store-btn:hover  { background: var(--btn-hover-bg); border-color: var(--btn-hover-brd); }
+    .store-btn:active { background: var(--btn-active-bg); }
 
     /* History section */
     .history-section {
@@ -290,14 +436,14 @@
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: #aaa;
+      color: var(--hist-h);
       text-align: center;
       margin-bottom: 0.75rem;
     }
 
     .history-empty {
       text-align: center;
-      color: #ccc;
+      color: var(--hist-empty);
       font-size: 0.82rem;
       padding: 1.25rem 0;
     }
@@ -330,9 +476,9 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 0.65rem;
-      background: #fff;
+      background: var(--item-bg);
       border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+      box-shadow: 0 2px 10px var(--item-shadow);
       padding: 0.8rem;
       position: relative;
       z-index: 1;
@@ -359,10 +505,7 @@
       z-index: 2;
       padding: 0;
     }
-
-    .history-item-wrap:hover .delete-btn {
-      opacity: 1;
-    }
+    .history-item-wrap:hover .delete-btn { opacity: 1; }
 
     .history-left {
       display: flex;
@@ -374,34 +517,34 @@
       font-size: 0.82rem;
       font-weight: 600;
       padding: 0.3rem 0.5rem;
-      border: 1.5px solid #d4d8df;
+      border: 1.5px solid var(--inp-border);
       border-radius: 6px;
       outline: none;
-      background: #fafbfc;
-      color: #1a1a2e;
+      background: var(--field-bg);
+      color: var(--field-color);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
-    .history-title:focus { border-color: #4a7cf7; }
+    .history-title:focus { border-color: var(--accent); }
 
     .history-notes {
       flex: 1;
       font-size: 0.78rem;
       padding: 0.35rem 0.5rem;
-      border: 1.5px solid #d4d8df;
+      border: 1.5px solid var(--inp-border);
       border-radius: 6px;
       outline: none;
-      background: #fafbfc;
-      color: #555;
+      background: var(--field-bg);
+      color: var(--notes-color);
       resize: none;
       min-height: 56px;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       line-height: 1.4;
     }
-    .history-notes:focus { border-color: #4a7cf7; }
+    .history-notes:focus { border-color: var(--accent); }
 
     .mini-result-box {
-      background: #f7f8fa;
-      border: 1.5px solid #e4e7ed;
+      background: var(--result-bg);
+      border: 1.5px solid var(--result-border);
       border-radius: 8px;
       padding: 0.6rem 0.65rem 0.55rem;
       display: flex;
@@ -413,13 +556,9 @@
       width: 100%;
       margin-bottom: 0.4rem;
       padding-bottom: 0.35rem;
-      border-bottom: 1px solid #e4e7ed;
+      border-bottom: 1px solid var(--divider);
     }
-
-    .mini-ruler svg {
-      display: block;
-      width: 100%;
-    }
+    .mini-ruler svg { display: block; width: 100%; }
 
     .mini-value-row {
       display: flex;
@@ -434,14 +573,14 @@
     .mini-frac {
       font-size: 1.25rem;
       font-weight: 700;
-      color: #1a1a2e;
+      color: var(--mini-frac);
       line-height: 1.1;
       word-break: break-all;
     }
 
     .mini-dec {
       font-size: 0.72rem;
-      color: #888;
+      color: var(--dec-color);
       font-family: "Menlo", "Consolas", "Courier New", monospace;
     }
 
@@ -449,30 +588,25 @@
       width: 100%;
       margin-top: 0.5rem;
       padding-top: 0.4rem;
-      border-top: 1px solid #e4e7ed;
+      border-top: 1px solid var(--divider);
     }
-    .mini-snap .snap-labels   { font-size: 0.66rem; margin-bottom: 0.22rem; }
-    .mini-snap .snap-track    { height: 5px; }
-    .mini-snap .snap-endpoint { width: 9px; height: 9px; }
+    .mini-snap .snap-labels    { font-size: 0.66rem; margin-bottom: 0.22rem; }
+    .mini-snap .snap-track     { height: 5px; }
+    .mini-snap .snap-endpoint  { width: 9px; height: 9px; }
     .mini-snap .snap-actual-dot { width: 7px; height: 7px; }
     .mini-snap .snap-distances  { font-size: 0.6rem; margin-top: 0.18rem; }
-
-    @media (max-width: 400px) {
-      .card { padding: 1.4rem 1.1rem 1.25rem; }
-      #result-frac { font-size: 2rem; }
-    }
 
     .ruler-visual {
       width: 100%;
       margin-bottom: 0.65rem;
       padding-bottom: 0.55rem;
-      border-bottom: 1px solid #e4e7ed;
+      border-bottom: 1px solid var(--divider);
     }
+    #ruler-svg { display: block; width: 100%; overflow: visible; }
 
-    #ruler-svg {
-      display: block;
-      width: 100%;
-      overflow: visible;
+    @media (max-width: 400px) {
+      .card { padding: 1.4rem 1.1rem 1.25rem; }
+      #result-frac { font-size: 2rem; }
     }
 
   </style>
@@ -511,20 +645,47 @@
       <svg id="ruler-svg" preserveAspectRatio="xMidYMid meet"></svg>
     </div>
     <div id="result-frac">—</div>
-    <div id="result-dec"></div>
+    <div id="result-dec-row">
+      <span id="result-dec"></span>
+      <span id="result-mm" hidden></span>
+    </div>
     <div id="snap-visual" class="snap-visual" hidden>
-      <div class="snap-labels">
-        <span id="snap-label-floor" class="snap-label"></span>
-        <span id="snap-label-ceil"  class="snap-label"></span>
+      <div class="snap-carousel-wrap">
+        <div class="snap-page active" id="snap-page-0">
+          <div class="snap-labels">
+            <span id="snap-label-floor" class="snap-label"></span>
+            <span id="snap-label-ceil"  class="snap-label"></span>
+          </div>
+          <div class="snap-track">
+            <div id="snap-dot-floor" class="snap-endpoint"></div>
+            <div id="snap-dot-ceil"  class="snap-endpoint"></div>
+            <div id="snap-dot-actual" class="snap-actual-dot"></div>
+          </div>
+          <div class="snap-distances">
+            <span id="snap-dist-floor" class="snap-dist"></span>
+            <span id="snap-dist-ceil"  class="snap-dist"></span>
+          </div>
+        </div>
+        <div class="snap-page" id="snap-page-1">
+          <div class="snap-labels">
+            <span id="snap-p1-label-floor" class="snap-label"></span>
+            <span id="snap-p1-label-ceil"  class="snap-label"></span>
+          </div>
+          <div class="snap-track">
+            <div id="snap-p1-dot-floor"  class="snap-endpoint"></div>
+            <div id="snap-p1-dot-ceil"   class="snap-endpoint"></div>
+            <div id="snap-p1-dot-actual" class="snap-actual-dot"></div>
+          </div>
+          <div class="snap-distances">
+            <span id="snap-p1-dist-floor" class="snap-dist"></span>
+            <span id="snap-p1-dist-ceil"  class="snap-dist"></span>
+          </div>
+          <div class="snap-mm-ticks-row" id="snap-mm-ticks-row"></div>
+        </div>
       </div>
-      <div class="snap-track">
-        <div id="snap-dot-floor" class="snap-endpoint"></div>
-        <div id="snap-dot-ceil"  class="snap-endpoint"></div>
-        <div id="snap-dot-actual" class="snap-actual-dot"></div>
-      </div>
-      <div class="snap-distances">
-        <span id="snap-dist-floor" class="snap-dist"></span>
-        <span id="snap-dist-ceil"  class="snap-dist"></span>
+      <div class="snap-pdots">
+        <span class="snap-pdot active" id="snap-pdot-0"></span>
+        <span class="snap-pdot" id="snap-pdot-1"></span>
       </div>
     </div>
   </div>
@@ -540,6 +701,7 @@
 
 <script>
   let currentDenom = 16;
+  let _lastHadMM = false;
 
   // --- Math helpers ---
   function gcd(a, b) {
@@ -593,12 +755,70 @@
       dc.className = "snap-dist" + (info.roundsUp ? " selected" : "");
     }
 
+    updateMmOverlay(info);
     vis.hidden = false;
+
+    // Mirror inch content to page 1 (which adds mm ticks below same inch snap)
+    document.getElementById("snap-p1-label-floor").textContent = lf.textContent;
+    document.getElementById("snap-p1-label-floor").className   = lf.className;
+    document.getElementById("snap-p1-label-ceil").textContent  = lc.textContent;
+    document.getElementById("snap-p1-label-ceil").className    = lc.className;
+    document.getElementById("snap-p1-dot-actual").style.left   = actual.style.left;
+    document.getElementById("snap-p1-dot-floor").className     = epFloor.className;
+    document.getElementById("snap-p1-dot-ceil").className      = epCeil.className;
+    document.getElementById("snap-p1-dist-floor").textContent  = df.textContent;
+    document.getElementById("snap-p1-dist-floor").className    = df.className;
+    document.getElementById("snap-p1-dist-ceil").textContent   = dc.textContent;
+    document.getElementById("snap-p1-dist-ceil").className     = dc.className;
+  }
+
+  function updateMmOverlay(info) {
+    const MM = 25.4;
+    const floorMM = info.floorV * MM;
+    const ceilMM  = info.ceilV  * MM;
+    const spanMM  = ceilMM - floorMM;
+
+    const ticksRow = document.getElementById("snap-mm-ticks-row");
+    ticksRow.innerHTML = "";
+
+    function placeTick(mmVal, isEP) {
+      const pct     = ((mmVal - floorMM) / spanMM) * 100;
+      const is1mm   = Math.abs(Math.round(mmVal * 10) % 10) === 0;
+      const isMajor = isEP || is1mm;
+      const tick = document.createElement("div");
+      tick.className = "snap-mm-tick " + (isMajor ? "major" : "minor");
+      tick.style.left = pct.toFixed(2) + "%";
+      ticksRow.appendChild(tick);
+      if (isMajor) {
+        const lbl = document.createElement("div");
+        lbl.className = "snap-mm-tick-label";
+        lbl.style.left = pct.toFixed(2) + "%";
+        lbl.textContent = mmVal.toFixed(1);
+        ticksRow.appendChild(lbl);
+      }
+    }
+
+    // Always draw floor and ceil endpoints
+    placeTick(floorMM, true);
+    placeTick(ceilMM, true);
+
+    // 0.5mm ticks strictly between endpoints
+    const iv = 0.5;
+    const firstInner = Math.ceil(floorMM / iv + 1e-9) * iv;
+    for (let t = firstInner; t < ceilMM - 1e-9; t = Math.round((t + iv) * 1e9) / 1e9) {
+      placeTick(t, false);
+    }
   }
 
   function updateRulerVisual(decimal, denom) {
     const vis = document.getElementById("ruler-visual");
     const svg = document.getElementById("ruler-svg");
+
+    const dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const clrBaseline  = dark ? "#3a3e4a" : "#cdd0d7";
+    const clrTick      = dark ? "#5a5e6a" : "#8a9099";
+    const clrLabel     = dark ? "#555"    : "#aaa";
+    const clrResult    = "#e74c3c";
 
     const rangeStart = Math.floor(decimal);
 
@@ -615,7 +835,7 @@
     const parts = [];
 
     // Baseline
-    parts.push(`<line x1="0" y1="0.5" x2="${W}" y2="0.5" stroke="#cdd0d7" stroke-width="1"/>`);
+    parts.push(`<line x1="0" y1="0.5" x2="${W}" y2="0.5" stroke="${clrBaseline}" stroke-width="1"/>`);
 
     for (let i = 0; i <= denom; i++) {
       const x = (i / denom) * W;
@@ -630,7 +850,7 @@
 
       const isResult = (i === snappedIndex);
       const h  = isResult ? maxTickH : tickH(rd);
-      const cl = isResult ? "#e74c3c" : "#8a9099";
+      const cl = isResult ? clrResult : clrTick;
       const sw = isResult ? 2.5 : (rd === 1 ? 1.5 : 1);
 
       parts.push(`<line x1="${x.toFixed(1)}" y1="0" x2="${x.toFixed(1)}" y2="${h.toFixed(1)}" stroke="${cl}" stroke-width="${sw}" stroke-linecap="round"/>`);
@@ -638,8 +858,8 @@
 
     // Inch labels at left and right endpoints
     const ll = `${rangeStart}"`, rl = `${rangeStart + 1}"`;
-    parts.push(`<text x="1" y="${labelY}" font-size="9" fill="#aaa" font-family="Menlo,Consolas,monospace">${ll}</text>`);
-    parts.push(`<text x="${W - 1}" y="${labelY}" text-anchor="end" font-size="9" fill="#aaa" font-family="Menlo,Consolas,monospace">${rl}</text>`);
+    parts.push(`<text x="1" y="${labelY}" font-size="9" fill="${clrLabel}" font-family="Menlo,Consolas,monospace">${ll}</text>`);
+    parts.push(`<text x="${W - 1}" y="${labelY}" text-anchor="end" font-size="9" fill="${clrLabel}" font-family="Menlo,Consolas,monospace">${rl}</text>`);
 
     svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
     svg.innerHTML = parts.join("");
@@ -671,15 +891,40 @@
   }
 
   // --- Safe eval ---
-  // Map display operators to JS operators, then sanitise
+  // Map display operators to JS operators, then preprocess units, then sanitise
   function safeEval(raw) {
-    // Replace typographic operators with JS equivalents
+    // Replace typographic operators and smart quotes
     let expr = raw
       .replace(/\u2212/g, "-")   // − → -
       .replace(/\u00d7/g, "*")   // × → *
-      .replace(/\u00f7/g, "/");  // ÷ → /
+      .replace(/\u00f7/g, "/")   // ÷ → /
+      .replace(/\u2019/g, "'")   // ' → '
+      .replace(/\u201d/g, '"');  // " → "
 
-    // Convert mixed fractions "W N/D" → "(W+N/D)", e.g. "12 3/8" → "(12+3/8)"
+    // Unit preprocessing (most specific patterns first)
+    _lastHadMM = false;
+
+    // 1. mm → convert to inches: "25.4mm" → "(25.4/25.4)"
+    if (/\d\s*mm\b/i.test(expr)) {
+      _lastHadMM = true;
+      expr = expr.replace(/(\d+(?:\.\d+)?)\s*mm\b/gi, (_, n) => `(${n}/25.4)`);
+    }
+
+    // 2. Feet + fractional inch: 1' 3/8" or 1'3/8 → (1*12+3/8)
+    expr = expr.replace(/(\d+(?:\.\d+)?)\s*'\s*(\d+)\s*\/\s*(\d+)\s*"?/g,
+      (_, ft, n, d) => `(${ft}*12+${n}/${d})`);
+
+    // 3. Feet + decimal/integer inch: 1' 6.5" or 1'6 → (1*12+6.5)
+    expr = expr.replace(/(\d+(?:\.\d+)?)\s*'\s*(\d+(?:\.\d+)?)\s*"?/g,
+      (_, ft, inch) => `(${ft}*12+${inch})`);
+
+    // 4. Feet alone: 3' → (3*12)
+    expr = expr.replace(/(\d+(?:\.\d+)?)\s*'/g, (_, ft) => `(${ft}*12)`);
+
+    // 5. Strip remaining inch quotes (bare inches need no conversion)
+    expr = expr.replace(/"/g, "");
+
+    // 6. Mixed fractions: "W N/D" → "(W+N/D)", e.g. "12 3/8" → "(12+3/8)"
     expr = expr.replace(/(\d+)\s+(\d+)\/(\d+)/g, (_, w, n, d) => `(${w}+${n}/${d})`);
 
     // Sanitise: only allow digits, operators, dot, parens, whitespace
@@ -704,7 +949,8 @@
   function calculate() {
     const raw = document.getElementById("formula").value;
     const fracEl = document.getElementById("result-frac");
-    const decEl = document.getElementById("result-dec");
+    const decEl  = document.getElementById("result-dec");
+    const mmEl   = document.getElementById("result-mm");
 
     const res = safeEval(raw);
 
@@ -712,6 +958,7 @@
       fracEl.textContent = "\u2014";
       fracEl.className = "";
       decEl.textContent = "";
+      mmEl.hidden = true;
       document.getElementById("snap-visual").hidden = true;
       document.getElementById("ruler-visual").hidden = true;
       return;
@@ -721,6 +968,7 @@
       fracEl.textContent = "Invalid expression";
       fracEl.className = "error";
       decEl.textContent = "";
+      mmEl.hidden = true;
       document.getElementById("snap-visual").hidden = true;
       document.getElementById("ruler-visual").hidden = true;
       return;
@@ -729,6 +977,14 @@
     fracEl.className = "";
     fracEl.textContent = toFraction(res.value, currentDenom);
     decEl.textContent = "(" + res.value.toFixed(6).replace(/\.?0+$/, "") + "\u2033)";
+
+    if (_lastHadMM) {
+      mmEl.textContent = "\u2248\u00a0" + (res.value * 25.4).toFixed(2).replace(/\.?0+$/, "") + "mm";
+      mmEl.hidden = false;
+    } else {
+      mmEl.hidden = true;
+    }
+
     updateSnapVisual(res.value, currentDenom);
     updateRulerVisual(res.value, currentDenom);
   }
@@ -876,9 +1132,10 @@
     miniRulerDiv.className = "mini-ruler";
     miniRulerDiv.appendChild(miniSvg);
 
-    // Mini snap — clone the live snap-visual
+    // Mini snap — clone the live snap-visual (reset to inch page first)
     let miniSnapEl = null;
     if (!snapSrc.hidden) {
+      if (snapSrc._resetPage) snapSrc._resetPage();
       miniSnapEl = snapSrc.cloneNode(true);
       miniSnapEl.removeAttribute("hidden");
       miniSnapEl.removeAttribute("id");
@@ -917,6 +1174,44 @@
   }
 
   document.getElementById("store-btn").addEventListener("click", storeResult);
+
+  // --- Snap carousel ---
+  function setupSnapCarousel() {
+    const vis = document.getElementById("snap-visual");
+    let activePage = 0;
+
+    function goToPage(n) {
+      activePage = n;
+      document.getElementById("snap-page-0").classList.toggle("active", n === 0);
+      document.getElementById("snap-page-1").classList.toggle("active", n === 1);
+      document.getElementById("snap-pdot-0").classList.toggle("active", n === 0);
+      document.getElementById("snap-pdot-1").classList.toggle("active", n === 1);
+    }
+
+    // Dot clicks
+    document.getElementById("snap-pdot-0").addEventListener("click", () => goToPage(0));
+    document.getElementById("snap-pdot-1").addEventListener("click", () => goToPage(1));
+
+    // Touch swipe on snap-visual
+    let swipeStartX = 0, swipeStartY = 0;
+    vis.addEventListener("touchstart", e => {
+      swipeStartX = e.touches[0].clientX;
+      swipeStartY = e.touches[0].clientY;
+    }, { passive: true });
+    vis.addEventListener("touchend", e => {
+      const dx = e.changedTouches[0].clientX - swipeStartX;
+      const dy = e.changedTouches[0].clientY - swipeStartY;
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 30) {
+        if (dx < 0 && activePage === 0) goToPage(1);
+        else if (dx > 0 && activePage === 1) goToPage(0);
+      }
+    });
+
+    // Expose page reset for storeResult (reset to inch page before cloning)
+    vis._resetPage = () => goToPage(0);
+  }
+
+  setupSnapCarousel();
 </script>
 </body>
 </html>
