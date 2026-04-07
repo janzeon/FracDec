@@ -46,7 +46,7 @@
       width: 100%;
       font-family: "Menlo", "Consolas", "Courier New", monospace;
       font-size: 1.1rem;
-      padding: 0.65rem 0.85rem;
+      padding: 0.65rem 3.2rem 0.65rem 0.85rem;
       border: 2px solid #d4d8df;
       border-radius: 8px;
       outline: none;
@@ -60,6 +60,23 @@
       border-color: #4a7cf7;
       background: #fff;
     }
+
+    #kbd-toggle {
+      position: absolute;
+      right: 0.5rem;
+      top: 50%; transform: translateY(-50%);
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: #888;
+      background: #eef0f4;
+      border: 1px solid #d4d8df;
+      border-radius: 10px;
+      padding: 0.15rem 0.45rem;
+      cursor: pointer;
+      user-select: none;
+      line-height: 1.4;
+    }
+    #kbd-toggle:hover { background: #e2e5ec; }
 
     /* Operator buttons */
     .ops {
@@ -454,7 +471,8 @@
   <h1>Inch Fraction Calculator</h1>
 
   <div class="input-wrap">
-    <input id="formula" type="text" placeholder="e.g. 1.5 + 1.8125" autocomplete="off" spellcheck="false">
+    <input id="formula" type="text" inputmode="decimal" placeholder="e.g. 1.5 + 1.8125" autocomplete="off" spellcheck="false">
+    <button id="kbd-toggle" title="Switch keyboard type">123</button>
   </div>
 
   <div class="ops">
@@ -464,6 +482,8 @@
     <button class="op-btn" data-insert="÷">÷</button>
     <button class="op-btn" data-insert="(">(</button>
     <button class="op-btn" data-insert=")">)</button>
+    <button class="op-btn" data-insert="/">/</button>
+    <button class="op-btn" data-insert=" ">␣</button>
   </div>
 
   <div class="section-label">Precision</div>
@@ -705,6 +725,15 @@
 
   // --- Event listeners ---
   document.getElementById("formula").addEventListener("input", calculate);
+
+  document.getElementById("kbd-toggle").addEventListener("click", () => {
+    const input = document.getElementById("formula");
+    const isDecimal = input.getAttribute("inputmode") === "decimal";
+    input.setAttribute("inputmode", isDecimal ? "text" : "decimal");
+    document.getElementById("kbd-toggle").textContent = isDecimal ? "ABC" : "123";
+    input.blur();
+    input.focus();
+  });
 
   document.querySelectorAll(".op-btn[data-insert]").forEach(btn => {
     btn.addEventListener("click", () => {
