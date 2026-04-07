@@ -106,7 +106,18 @@
     .op-btn:hover { background: #eef0f4; border-color: #bcc1ca; }
     .op-btn:active { background: #e2e5ec; }
 
-    /* Precision */
+    .space-btn {
+      display: none; /* hidden on desktop */
+      width: 100%;
+      margin-top: 0.4rem;
+      flex: none;
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+    }
+
+    @media (hover: none) and (pointer: coarse) {
+      .space-btn { display: flex; }
+    }
     .section-label {
       font-size: 0.75rem;
       font-weight: 600;
@@ -479,12 +490,11 @@
     <button class="op-btn" data-insert="+">+</button>
     <button class="op-btn" data-insert="−">−</button>
     <button class="op-btn" data-insert="×">×</button>
-    <button class="op-btn" data-insert="÷">÷</button>
+    <button class="op-btn" data-insert="/">/</button>
     <button class="op-btn" data-insert="(">(</button>
     <button class="op-btn" data-insert=")">)</button>
-    <button class="op-btn" data-insert="/">/</button>
-    <button class="op-btn" data-insert=" ">␣</button>
   </div>
+  <button class="op-btn space-btn" data-insert=" ">space</button>
 
   <div class="section-label">Precision</div>
   <div class="precision-wrap">
