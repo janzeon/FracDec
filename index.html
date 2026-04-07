@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inch Fraction Calculator</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f0f2f5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+      gap: 1.25rem;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+      padding: 2rem 2rem 1.75rem;
+      width: 100%;
+      max-width: 440px;
+    }
+
+    h1 {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 1.25rem;
+      text-align: center;
+    }
+
+    /* Input */
+    .input-wrap {
+      position: relative;
+    }
+
+    #formula {
+      width: 100%;
+      font-family: "Menlo", "Consolas", "Courier New", monospace;
+      font-size: 1.1rem;
+      padding: 0.65rem 0.85rem;
+      border: 2px solid #d4d8df;
+      border-radius: 8px;
+      outline: none;
+      color: #1a1a2e;
+      background: #fafbfc;
+      transition: border-color 0.15s;
+      text-align: center;
+    }
+
+    #formula:focus {
+      border-color: #4a7cf7;
+      background: #fff;
+    }
+
+    /* Operator buttons */
+    .ops {
+      display: flex;
+      gap: 0.4rem;
+      margin-top: 0.65rem;
+      flex-wrap: wrap;
+    }
+
+    .op-btn {
+      font-size: 1rem;
+      font-weight: 600;
+      flex: 1;
+      height: 2.4rem;
+      border: 1.5px solid #d4d8df;
+      border-radius: 7px;
+      background: #f7f8fa;
+      color: #333;
+      cursor: pointer;
+      transition: background 0.1s, border-color 0.1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+    }
+
+    .op-btn:hover { background: #eef0f4; border-color: #bcc1ca; }
+    .op-btn:active { background: #e2e5ec; }
+
+    /* Precision */
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #aaa;
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+
+    .precision-wrap {
+      display: flex;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+    }
+
+    .prec-btn {
+      font-size: 0.82rem;
+      font-weight: 600;
+      flex: 1;
+      padding: 0.3rem 0;
+      border: 1.5px solid #d4d8df;
+      border-radius: 20px;
+      background: #f7f8fa;
+      color: #555;
+      cursor: pointer;
+      transition: all 0.12s;
+      user-select: none;
+      text-align: center;
+    }
+
+    .prec-btn:hover { background: #eef0f4; border-color: #bcc1ca; }
+
+    .prec-btn.active {
+      background: #4a7cf7;
+      border-color: #4a7cf7;
+      color: #fff;
+    }
+
+    /* Result */
+    .result-box {
+      margin-top: 1.5rem;
+      background: #f7f8fa;
+      border: 1.5px solid #e4e7ed;
+      border-radius: 10px;
+      padding: 1.1rem 1.25rem 1rem;
+      min-height: 5.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #result-frac {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #1a1a2e;
+      line-height: 1.1;
+      word-break: break-all;
+      text-align: center;
+      width: 100%;
+    }
+
+    #result-frac.error {
+      font-size: 1.2rem;
+      color: #c0392b;
+    }
+
+    #result-dec {
+      font-size: 0.9rem;
+      color: #888;
+      margin-top: 0.35rem;
+      font-family: "Menlo", "Consolas", "Courier New", monospace;
+      text-align: center;
+      width: 100%;
+    }
+
+    .snap-visual {
+      width: 100%;
+      margin-top: 1rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid #e4e7ed;
+    }
+
+    .snap-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #aaa;
+      margin-bottom: 0.35rem;
+      font-family: "Menlo", "Consolas", monospace;
+    }
+
+    .snap-label.selected { color: #4a7cf7; }
+
+    .snap-track {
+      position: relative;
+      height: 6px;
+      background: #e4e7ed;
+      border-radius: 3px;
+      margin: 0 8px;
+    }
+
+    .snap-endpoint {
+      position: absolute;
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: #d4d8df;
+      border: 2px solid #fff;
+      top: 50%; transform: translate(-50%, -50%);
+    }
+    .snap-endpoint:first-child { left: 0%; }
+    .snap-endpoint:nth-child(2) { left: 100%; }
+    .snap-endpoint.selected {
+      background: #4a7cf7;
+      box-shadow: 0 0 0 3px rgba(74,124,247,0.2);
+    }
+
+    .snap-actual-dot {
+      position: absolute;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #1a1a2e;
+      border: 2px solid #fff;
+      top: 50%; transform: translate(-50%, -50%);
+      transition: left 0.12s ease;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+    }
+
+    .snap-distances {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: #bbb;
+      margin-top: 0.3rem;
+      font-family: "Menlo", "Consolas", monospace;
+    }
+    .snap-dist.selected { color: #4a7cf7; font-weight: 600; }
+
+    /* Store button */
+    .store-btn {
+      display: block;
+      width: 100%;
+      margin-top: 0.85rem;
+      padding: 0.55rem;
+      background: #f7f8fa;
+      border: 1.5px solid #d4d8df;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #555;
+      cursor: pointer;
+      transition: all 0.12s;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .store-btn:hover { background: #eef0f4; border-color: #bcc1ca; }
+    .store-btn:active { background: #e2e5ec; }
+
+    /* History section */
+    .history-section {
+      width: 100%;
+      max-width: 440px;
+    }
+
+    .history-header {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #aaa;
+      text-align: center;
+      margin-bottom: 0.75rem;
+    }
+
+    .history-empty {
+      text-align: center;
+      color: #ccc;
+      font-size: 0.82rem;
+      padding: 1.25rem 0;
+    }
+
+    .history-item-wrap {
+      position: relative;
+      border-radius: 10px;
+      margin-bottom: 0.75rem;
+      overflow: hidden;
+    }
+
+    .swipe-delete-bg {
+      position: absolute;
+      right: 0; top: 0; bottom: 0;
+      width: 72px;
+      background: #e74c3c;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+      user-select: none;
+      border-radius: 0 10px 10px 0;
+    }
+
+    .history-item {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.65rem;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+      padding: 0.8rem;
+      position: relative;
+      z-index: 1;
+      will-change: transform;
+    }
+
+    .delete-btn {
+      position: absolute;
+      top: 7px; right: 7px;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: #e74c3c;
+      border: none;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.15s;
+      z-index: 2;
+      padding: 0;
+    }
+
+    .history-item-wrap:hover .delete-btn {
+      opacity: 1;
+    }
+
+    .history-left {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .history-title {
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.3rem 0.5rem;
+      border: 1.5px solid #d4d8df;
+      border-radius: 6px;
+      outline: none;
+      background: #fafbfc;
+      color: #1a1a2e;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .history-title:focus { border-color: #4a7cf7; }
+
+    .history-notes {
+      flex: 1;
+      font-size: 0.78rem;
+      padding: 0.35rem 0.5rem;
+      border: 1.5px solid #d4d8df;
+      border-radius: 6px;
+      outline: none;
+      background: #fafbfc;
+      color: #555;
+      resize: none;
+      min-height: 56px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.4;
+    }
+    .history-notes:focus { border-color: #4a7cf7; }
+
+    .mini-result-box {
+      background: #f7f8fa;
+      border: 1.5px solid #e4e7ed;
+      border-radius: 8px;
+      padding: 0.6rem 0.65rem 0.55rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .mini-ruler {
+      width: 100%;
+      margin-bottom: 0.4rem;
+      padding-bottom: 0.35rem;
+      border-bottom: 1px solid #e4e7ed;
+    }
+
+    .mini-ruler svg {
+      display: block;
+      width: 100%;
+    }
+
+    .mini-value-row {
+      display: flex;
+      align-items: baseline;
+      gap: 0.35rem;
+      justify-content: center;
+      width: 100%;
+      flex-wrap: wrap;
+      margin-top: 0.3rem;
+    }
+
+    .mini-frac {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1a1a2e;
+      line-height: 1.1;
+      word-break: break-all;
+    }
+
+    .mini-dec {
+      font-size: 0.72rem;
+      color: #888;
+      font-family: "Menlo", "Consolas", "Courier New", monospace;
+    }
+
+    .mini-snap {
+      width: 100%;
+      margin-top: 0.5rem;
+      padding-top: 0.4rem;
+      border-top: 1px solid #e4e7ed;
+    }
+    .mini-snap .snap-labels   { font-size: 0.66rem; margin-bottom: 0.22rem; }
+    .mini-snap .snap-track    { height: 5px; }
+    .mini-snap .snap-endpoint { width: 9px; height: 9px; }
+    .mini-snap .snap-actual-dot { width: 7px; height: 7px; }
+    .mini-snap .snap-distances  { font-size: 0.6rem; margin-top: 0.18rem; }
+
+    @media (max-width: 400px) {
+      .card { padding: 1.4rem 1.1rem 1.25rem; }
+      #result-frac { font-size: 2rem; }
+    }
+
+    .ruler-visual {
+      width: 100%;
+      margin-bottom: 0.65rem;
+      padding-bottom: 0.55rem;
+      border-bottom: 1px solid #e4e7ed;
+    }
+
+    #ruler-svg {
+      display: block;
+      width: 100%;
+      overflow: visible;
+    }
+
+  </style>
+</head>
+<body>
+<div class="card">
+  <h1>Inch Fraction Calculator</h1>
+
+  <div class="input-wrap">
+    <input id="formula" type="text" placeholder="e.g. 1.5 + 1.8125" autocomplete="off" spellcheck="false">
+  </div>
+
+  <div class="ops">
+    <button class="op-btn" data-insert="+">+</button>
+    <button class="op-btn" data-insert="−">−</button>
+    <button class="op-btn" data-insert="×">×</button>
+    <button class="op-btn" data-insert="÷">÷</button>
+    <button class="op-btn" data-insert="(">(</button>
+    <button class="op-btn" data-insert=")">)</button>
+  </div>
+
+  <div class="section-label">Precision</div>
+  <div class="precision-wrap">
+    <button class="prec-btn" data-denom="2">1/2</button>
+    <button class="prec-btn" data-denom="4">1/4</button>
+    <button class="prec-btn" data-denom="8">1/8</button>
+    <button class="prec-btn active" data-denom="16">1/16</button>
+    <button class="prec-btn" data-denom="32">1/32</button>
+    <button class="prec-btn" data-denom="64">1/64</button>
+  </div>
+
+  <div class="result-box">
+    <div id="ruler-visual" class="ruler-visual" hidden>
+      <svg id="ruler-svg" preserveAspectRatio="xMidYMid meet"></svg>
+    </div>
+    <div id="result-frac">—</div>
+    <div id="result-dec"></div>
+    <div id="snap-visual" class="snap-visual" hidden>
+      <div class="snap-labels">
+        <span id="snap-label-floor" class="snap-label"></span>
+        <span id="snap-label-ceil"  class="snap-label"></span>
+      </div>
+      <div class="snap-track">
+        <div id="snap-dot-floor" class="snap-endpoint"></div>
+        <div id="snap-dot-ceil"  class="snap-endpoint"></div>
+        <div id="snap-dot-actual" class="snap-actual-dot"></div>
+      </div>
+      <div class="snap-distances">
+        <span id="snap-dist-floor" class="snap-dist"></span>
+        <span id="snap-dist-ceil"  class="snap-dist"></span>
+      </div>
+    </div>
+  </div>
+  <button class="store-btn" id="store-btn">Store Result</button>
+</div>
+
+<div class="history-section">
+  <div class="history-header">History</div>
+  <div id="history-list">
+    <p class="history-empty">Press Store to save a result.</p>
+  </div>
+</div>
+
+<script>
+  let currentDenom = 16;
+
+  // --- Math helpers ---
+  function gcd(a, b) {
+    a = Math.abs(a); b = Math.abs(b);
+    while (b) { let t = b; b = a % b; a = t; }
+    return a || 1;
+  }
+
+  function getSnapInfo(decimal, denom) {
+    const step = 1 / denom;
+    const floorN = Math.floor(decimal / step);
+    const floorV = floorN * step;
+    const ceilV  = (floorN + 1) * step;
+    const exact  = Math.abs(decimal - floorV) < 1e-9 || Math.abs(decimal - ceilV) < 1e-9;
+    const t      = exact ? (Math.abs(decimal - floorV) < 1e-9 ? 0 : 1)
+                         : (decimal - floorV) / (ceilV - floorV);
+    const roundsUp = t > 0.5;
+    const distFloor = decimal - floorV;
+    const distCeil  = ceilV - decimal;
+    return { floorV, ceilV, t, exact, roundsUp, distFloor, distCeil };
+  }
+
+  function updateSnapVisual(decimal, denom) {
+    const vis = document.getElementById("snap-visual");
+    const info = getSnapInfo(decimal, denom);
+
+    const lf = document.getElementById("snap-label-floor");
+    const lc = document.getElementById("snap-label-ceil");
+    lf.textContent = toFraction(info.floorV, denom);
+    lc.textContent = toFraction(info.ceilV, denom);
+    lf.className = "snap-label" + (info.roundsUp ? "" : " selected");
+    lc.className = "snap-label" + (info.roundsUp ? " selected" : "");
+
+    const actual = document.getElementById("snap-dot-actual");
+    actual.style.left = (info.t * 100).toFixed(2) + "%";
+
+    const epFloor = document.getElementById("snap-dot-floor");
+    const epCeil  = document.getElementById("snap-dot-ceil");
+    epFloor.className = "snap-endpoint" + (info.roundsUp ? "" : " selected");
+    epCeil.className  = "snap-endpoint" + (info.roundsUp ? " selected" : "");
+
+    const df = document.getElementById("snap-dist-floor");
+    const dc = document.getElementById("snap-dist-ceil");
+    if (info.exact) {
+      df.textContent = dc.textContent = "exact";
+      df.className = dc.className = "snap-dist selected";
+    } else {
+      df.textContent = "+" + info.distFloor.toFixed(4).replace(/0+$/, "").replace(/\.$/, "") + '"';
+      dc.textContent = "\u2212" + info.distCeil.toFixed(4).replace(/0+$/, "").replace(/\.$/, "") + '"';
+      df.className = "snap-dist" + (info.roundsUp ? "" : " selected");
+      dc.className = "snap-dist" + (info.roundsUp ? " selected" : "");
+    }
+
+    vis.hidden = false;
+  }
+
+  function updateRulerVisual(decimal, denom) {
+    const vis = document.getElementById("ruler-visual");
+    const svg = document.getElementById("ruler-svg");
+
+    const rangeStart = Math.floor(decimal);
+
+    const W = 400, H = 38, maxTickH = 26;
+    const labelY = H - 1;
+
+    // Tick height by reduced denominator (real ruler proportions)
+    const heightMap = { 1: 1.0, 2: 0.65, 4: 0.50, 8: 0.38, 16: 0.28, 32: 0.20, 64: 0.15 };
+    function tickH(rd) { return (heightMap[rd] ?? 0.15) * maxTickH; }
+
+    // Which tick index (0..denom) corresponds to the rounded result?
+    const snappedIndex = Math.min(denom, Math.max(0, Math.round((decimal - rangeStart) * denom)));
+
+    const parts = [];
+
+    // Baseline
+    parts.push(`<line x1="0" y1="0.5" x2="${W}" y2="0.5" stroke="#cdd0d7" stroke-width="1"/>`);
+
+    for (let i = 0; i <= denom; i++) {
+      const x = (i / denom) * W;
+
+      let rd;
+      if (i === 0 || i === denom) {
+        rd = 1;
+      } else {
+        const g = gcd(i, denom);
+        rd = denom / g;
+      }
+
+      const isResult = (i === snappedIndex);
+      const h  = isResult ? maxTickH : tickH(rd);
+      const cl = isResult ? "#e74c3c" : "#8a9099";
+      const sw = isResult ? 2.5 : (rd === 1 ? 1.5 : 1);
+
+      parts.push(`<line x1="${x.toFixed(1)}" y1="0" x2="${x.toFixed(1)}" y2="${h.toFixed(1)}" stroke="${cl}" stroke-width="${sw}" stroke-linecap="round"/>`);
+    }
+
+    // Inch labels at left and right endpoints
+    const ll = `${rangeStart}"`, rl = `${rangeStart + 1}"`;
+    parts.push(`<text x="1" y="${labelY}" font-size="9" fill="#aaa" font-family="Menlo,Consolas,monospace">${ll}</text>`);
+    parts.push(`<text x="${W - 1}" y="${labelY}" text-anchor="end" font-size="9" fill="#aaa" font-family="Menlo,Consolas,monospace">${rl}</text>`);
+
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    svg.innerHTML = parts.join("");
+    vis.hidden = false;
+  }
+
+  function toFraction(decimal, denominator) {
+    const negative = decimal < 0;
+    const abs = Math.abs(decimal);
+    let whole = Math.floor(abs);
+    const frac = abs - whole;
+
+    let numerator = Math.round(frac * denominator);
+    let d = denominator;
+
+    // carry: e.g. 15.9999 rounds to 16/16 = 1
+    if (numerator === denominator) { numerator = 0; whole += 1; }
+
+    const g = gcd(numerator, d);
+    numerator /= g;
+    d /= g;
+
+    const sign = negative ? "\u2212" : "";  // − (minus sign)
+
+    if (whole > 0 && numerator > 0) return `${sign}${whole} ${numerator}/${d}"`;
+    if (whole > 0)                   return `${sign}${whole}"`;
+    if (numerator > 0)               return `${sign}${numerator}/${d}"`;
+    return `0"`;
+  }
+
+  // --- Safe eval ---
+  // Map display operators to JS operators, then sanitise
+  function safeEval(raw) {
+    // Replace typographic operators with JS equivalents
+    let expr = raw
+      .replace(/\u2212/g, "-")   // − → -
+      .replace(/\u00d7/g, "*")   // × → *
+      .replace(/\u00f7/g, "/");  // ÷ → /
+
+    // Convert mixed fractions "W N/D" → "(W+N/D)", e.g. "12 3/8" → "(12+3/8)"
+    expr = expr.replace(/(\d+)\s+(\d+)\/(\d+)/g, (_, w, n, d) => `(${w}+${n}/${d})`);
+
+    // Sanitise: only allow digits, operators, dot, parens, whitespace
+    if (!/^[0-9+\-*\/().\s]+$/.test(expr)) {
+      return { error: true };
+    }
+
+    // Guard against empty / whitespace-only
+    if (!expr.trim()) return { error: true, empty: true };
+
+    try {
+      // eslint-disable-next-line no-new-func
+      const result = Function('"use strict"; return (' + expr + ')')();
+      if (typeof result !== "number" || !isFinite(result)) return { error: true };
+      return { value: result };
+    } catch {
+      return { error: true };
+    }
+  }
+
+  // --- UI update ---
+  function calculate() {
+    const raw = document.getElementById("formula").value;
+    const fracEl = document.getElementById("result-frac");
+    const decEl = document.getElementById("result-dec");
+
+    const res = safeEval(raw);
+
+    if (res.empty || raw.trim() === "") {
+      fracEl.textContent = "\u2014";
+      fracEl.className = "";
+      decEl.textContent = "";
+      document.getElementById("snap-visual").hidden = true;
+      document.getElementById("ruler-visual").hidden = true;
+      return;
+    }
+
+    if (res.error) {
+      fracEl.textContent = "Invalid expression";
+      fracEl.className = "error";
+      decEl.textContent = "";
+      document.getElementById("snap-visual").hidden = true;
+      document.getElementById("ruler-visual").hidden = true;
+      return;
+    }
+
+    fracEl.className = "";
+    fracEl.textContent = toFraction(res.value, currentDenom);
+    decEl.textContent = "(" + res.value.toFixed(6).replace(/\.?0+$/, "") + "\u2033)";
+    updateSnapVisual(res.value, currentDenom);
+    updateRulerVisual(res.value, currentDenom);
+  }
+
+  // --- Event listeners ---
+  document.getElementById("formula").addEventListener("input", calculate);
+
+  document.querySelectorAll(".op-btn[data-insert]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const input = document.getElementById("formula");
+      const ins = btn.dataset.insert;
+      const start = input.selectionStart;
+      const end = input.selectionEnd;
+      const val = input.value;
+      input.value = val.slice(0, start) + ins + val.slice(end);
+      const pos = start + ins.length;
+      input.setSelectionRange(pos, pos);
+      input.focus();
+      calculate();
+    });
+  });
+
+  document.querySelectorAll(".prec-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".prec-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentDenom = parseInt(btn.dataset.denom, 10);
+      calculate();
+    });
+  });
+
+  // --- Store / History ---
+  let _openSwipeWrap = null;
+
+  // Close any open swipe when touching outside it
+  document.addEventListener("touchstart", e => {
+    if (_openSwipeWrap && !_openSwipeWrap.contains(e.target)) {
+      const oi = _openSwipeWrap.querySelector(".history-item");
+      oi.style.transition = "transform 0.25s ease";
+      oi.style.transform = "";
+      _openSwipeWrap = null;
+    }
+  }, { passive: true });
+
+  function deleteHistoryItem(wrap) {
+    if (wrap._deleting) return;
+    wrap._deleting = true;
+    const h = wrap.offsetHeight;
+    wrap.style.maxHeight = h + "px";
+    wrap.style.transition = "max-height 0.28s ease, opacity 0.28s ease, margin-bottom 0.28s ease";
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      wrap.style.maxHeight = "0";
+      wrap.style.opacity = "0";
+      wrap.style.marginBottom = "0";
+    }));
+    setTimeout(() => {
+      wrap.remove();
+      const list = document.getElementById("history-list");
+      if (!list.querySelector(".history-item-wrap")) {
+        list.innerHTML = '<p class="history-empty">Press Store to save a result.</p>';
+      }
+    }, 290);
+  }
+
+  function setupHistoryItem(wrap) {
+    const item = wrap.querySelector(".history-item");
+    const deleteBg = wrap.querySelector(".swipe-delete-bg");
+    const deleteBtn = item.querySelector(".delete-btn");
+    const REVEAL = 72, THRESHOLD = 40;
+    let pos = 0, startX, startY, startPos, tracking;
+
+    function setPos(x, animate) {
+      pos = Math.min(0, Math.max(x, -REVEAL));
+      item.style.transition = animate ? "transform 0.25s ease" : "none";
+      item.style.transform = pos === 0 ? "" : `translateX(${pos}px)`;
+    }
+
+    deleteBtn.addEventListener("click", () => deleteHistoryItem(wrap));
+    deleteBg.addEventListener("click", () => deleteHistoryItem(wrap));
+
+    item.addEventListener("touchstart", e => {
+      // Close any other open swipe
+      if (_openSwipeWrap && _openSwipeWrap !== wrap) {
+        const oi = _openSwipeWrap.querySelector(".history-item");
+        oi.style.transition = "transform 0.25s ease";
+        oi.style.transform = "";
+        _openSwipeWrap = null;
+      }
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      startPos = pos;
+      tracking = false;
+    }, { passive: true });
+
+    item.addEventListener("touchmove", e => {
+      const dx = e.touches[0].clientX - startX;
+      const dy = e.touches[0].clientY - startY;
+      if (!tracking) {
+        if (Math.abs(dy) > Math.abs(dx)) return;
+        tracking = true;
+      }
+      setPos(startPos + dx, false);
+    }, { passive: true });
+
+    item.addEventListener("touchend", () => {
+      if (!tracking) return;
+      if (pos < -THRESHOLD) {
+        setPos(-REVEAL, true);
+        _openSwipeWrap = wrap;
+      } else {
+        setPos(0, true);
+        if (_openSwipeWrap === wrap) _openSwipeWrap = null;
+      }
+    });
+  }
+
+  function storeResult() {
+    const fracEl   = document.getElementById("result-frac");
+    const decEl    = document.getElementById("result-dec");
+    const rulerSvg = document.getElementById("ruler-svg");
+    const snapSrc  = document.getElementById("snap-visual");
+
+    if (!fracEl.textContent || fracEl.textContent === "\u2014" || fracEl.classList.contains("error")) return;
+
+    const list = document.getElementById("history-list");
+    const empty = list.querySelector(".history-empty");
+    if (empty) empty.remove();
+
+    // Mini ruler — clone the live SVG
+    const miniSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    miniSvg.setAttribute("viewBox", rulerSvg.getAttribute("viewBox") || "0 0 400 38");
+    miniSvg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+    miniSvg.style.cssText = "width:100%;display:block;";
+    miniSvg.innerHTML = rulerSvg.innerHTML;
+    const miniRulerDiv = document.createElement("div");
+    miniRulerDiv.className = "mini-ruler";
+    miniRulerDiv.appendChild(miniSvg);
+
+    // Mini snap — clone the live snap-visual
+    let miniSnapEl = null;
+    if (!snapSrc.hidden) {
+      miniSnapEl = snapSrc.cloneNode(true);
+      miniSnapEl.removeAttribute("hidden");
+      miniSnapEl.removeAttribute("id");
+      miniSnapEl.querySelectorAll("[id]").forEach(el => el.removeAttribute("id"));
+      miniSnapEl.className = "mini-snap";
+    }
+
+    // Build wrapper + item
+    const wrap = document.createElement("div");
+    wrap.className = "history-item-wrap";
+    wrap.innerHTML = `
+      <div class="swipe-delete-bg">Delete</div>
+      <div class="history-item">
+        <button class="delete-btn" aria-label="Delete">\u00d7</button>
+        <div class="history-left">
+          <input class="history-title" placeholder="Label this result\u2026" />
+          <textarea class="history-notes" placeholder="Notes\u2026"></textarea>
+        </div>
+        <div class="history-right">
+          <div class="mini-result-box"></div>
+        </div>
+      </div>`;
+
+    const miniBox = wrap.querySelector(".mini-result-box");
+    miniBox.appendChild(miniRulerDiv);
+
+    const valueRow = document.createElement("div");
+    valueRow.className = "mini-value-row";
+    valueRow.innerHTML = `<span class="mini-frac">${fracEl.textContent}</span><span class="mini-dec">${decEl.textContent}</span>`;
+    miniBox.appendChild(valueRow);
+
+    if (miniSnapEl) miniBox.appendChild(miniSnapEl);
+
+    setupHistoryItem(wrap);
+    list.prepend(wrap);
+  }
+
+  document.getElementById("store-btn").addEventListener("click", storeResult);
+</script>
+</body>
+</html>
